@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IT Inventory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+    }
+
+    .container {
+      max-width: 750px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    input, select {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .full {
+      grid-column: span 2;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      background: #5a67d8;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>💻 IT Inventory</h2>
+
+  <div class="grid">
+
+    <select id="location" class="full">
+      <option value="">Select Location</option>
+      <option value="Kolkata">Kolkata</option>
+      <option value="Mumbai">Mumbai</option>
+      <option value="Gurgaon">Gurgaon</option>
+      <option value="Bangalore">Bangalore</option>
+    </select>
+
+    <input id="user" placeholder="User">
+    <input id="make" placeholder="Make">
+
+    <input id="model" placeholder="Model">
+    <input id="machineType" placeholder="Machine Type">
+
+    <input id="serialNumber" placeholder="Serial Number">
+    <input id="ram" placeholder="RAM">
+
+    <input id="storage" placeholder="Storage">
+    <input id="processor" placeholder="Processor">
+
+    <input id="os" placeholder="OS Version">
+    <input id="ip" placeholder="IP Address">
+
+    <input id="platform" placeholder="Platform">
+    <input id="hostname" placeholder="Hostname">
+
+    <input id="ill" placeholder="ILL Details" class="full">
+
+  </div>
+
+  <button id="submitBtn" onclick="submitData()">Submit</button>
+</div>
+
+<script>
+function submitData() {
+
+  var btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.innerText = "Saving...";
+
+  var data = {
+    location: document.getElementById("location").value,
+    user: document.getElementById("user").value,
+    make: document.getElementById("make").value,
+    model: document.getElementById("model").value,
+    machineType: document.getElementById("machineType").value,
+    serialNumber: document.getElementById("serialNumber").value,
+    ram: document.getElementById("ram").value,
+    storage: document.getElementById("storage").value,
+    processor: document.getElementById("processor").value,
+    os: document.getElementById("os").value,
+    ip: document.getElementById("ip").value,
+    platform: document.getElementById("platform").value,
+    ill: document.getElementById("ill").value,
+    hostname: document.getElementById("hostname").value
+  };
+
+  // Validation
+  if (!data.location) {
+    alert("Please select location");
+    resetButton();
+    return;
+  }
+
+  if (!data.user || !data.hostname) {
+    alert("User & Hostname required!");
+    resetButton();
+    return;
+  }
+
+  fetch("https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec", {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(res => res.text())
+  .then(res => {
+    if (res.startsWith("ERROR")) {
+      alert("❌ " + res);
+    } else {
+      alert("✅ Data Saved!");
+
+      // Clear form
+      document.querySelectorAll("input").forEach(i => i.value = "");
+      document.getElementById("location").selectedIndex = 0;
+    }
+  })
+  .catch(err => alert("❌ Error while saving"))
+  .finally(() => {
+    resetButton();
+  });
+
+  function resetButton() {
+    btn.disabled = false;
+    btn.innerText = "Submit";
+  }
+}
+</script>
+
+</body>
+</html>
