@@ -55,7 +55,6 @@
 
     button:disabled {
       background: #999;
-      cursor: not-allowed;
     }
   </style>
 </head>
@@ -91,15 +90,11 @@
 
   </div>
 
-  <button id="submitBtn" onclick="submitData()">Submit</button>
+  <button onclick="submitData()">Submit</button>
 </div>
 
 <script>
 function submitData() {
-
-  var btn = document.getElementById("submitBtn");
-  btn.disabled = true;
-  btn.innerText = "Saving...";
 
   var data = {
     location: document.getElementById("location").value,
@@ -120,42 +115,31 @@ function submitData() {
 
   if (!data.location) {
     alert("Please select location");
-    resetBtn();
     return;
   }
 
   if (!data.user || !data.hostname) {
     alert("User & Hostname required!");
-    resetBtn();
     return;
   }
 
-  fetch("https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec", {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.status === "error") {
-      alert("❌ " + res.message);
-    } else {
-      alert("✅ Data Saved!");
-      document.querySelectorAll("input").forEach(i => i.value = "");
-      document.getElementById("location").selectedIndex = 0;
-    }
-  })
-  .catch(err => alert("❌ Error while saving"))
-  .finally(() => resetBtn());
+  var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
 
-  function resetBtn() {
-    btn.disabled = false;
-    btn.innerText = "Submit";
-  }
+  fetch(url + "?data=" + encodeURIComponent(JSON.stringify(data)))
+    .then(res => res.text())
+    .then(res => {
+      if (res.startsWith("ERROR")) {
+        alert("❌ " + res);
+      } else {
+        alert("✅ Data Saved!");
+        document.querySelectorAll("input").forEach(i => i.value = "");
+        document.getElementById("location").selectedIndex = 0;
+      }
+    })
+    .catch(() => alert("❌ Error while saving"));
 }
 </script>
 
 </body>
+</html>
 </html>
