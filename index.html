@@ -5,53 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      margin: 0;
-    }
-
-    .container {
-      max-width: 750px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    input, select {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    .full {
-      grid-column: span 2;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      margin-top: 10px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+    body { font-family: 'Segoe UI'; background: linear-gradient(135deg,#667eea,#764ba2); }
+    .container { max-width:750px; margin:40px auto; background:#fff; padding:20px; border-radius:10px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    input,select { padding:10px; border:1px solid #ccc; border-radius:5px; }
+    .full { grid-column: span 2; }
+    button { width:100%; padding:10px; background:#667eea; color:#fff; border:none; margin-top:10px; }
+    #result { margin-top:15px; background:#f1f1f1; padding:10px; }
   </style>
 </head>
 
@@ -60,25 +20,34 @@
 <div class="container">
   <h2>💻 IT Inventory</h2>
 
+  <!-- 🔍 SEARCH -->
+  <input id="searchSerial" placeholder="Search by Serial Number" class="full">
+  <button onclick="searchData()">Search</button>
+
+  <div id="result"></div>
+
+  <hr>
+
   <div class="grid">
 
     <select id="location" class="full">
       <option value="">Select Location</option>
-      <option value="Kolkata">Kolkata</option>
-      <option value="Mumbai">Mumbai</option>
-      <option value="Gurgaon">Gurgaon</option>
-      <option value="Bangalore">Bangalore</option>
+      <option>Kolkata</option>
+      <option>Mumbai</option>
+      <option>Gurgaon</option>
+      <option>Bangalore</option>
     </select>
 
     <input id="user" placeholder="User">
     <input id="make" placeholder="Make">
     <input id="model" placeholder="Model">
     <input id="machineType" placeholder="Machine Type">
-    <input id="serialNumber" placeholder="Serial Number">
+    <input id="serialNumber" placeholder="Serial Number (Required)">
     <input id="ram" placeholder="RAM">
     <input id="storage" placeholder="Storage">
     <input id="processor" placeholder="Processor">
     <input id="os" placeholder="OS Version">
+    <input id="monitor" placeholder="Nos Of Monitor">
     <input id="ip" placeholder="IP Address">
     <input id="platform" placeholder="Platform">
     <input id="hostname" placeholder="Hostname">
@@ -90,8 +59,10 @@
 </div>
 
 <script>
-function submitData() {
+var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
 
+// ➕ SAVE
+function submitData() {
   var data = {
     location: document.getElementById("location").value,
     user: document.getElementById("user").value,
@@ -103,29 +74,37 @@ function submitData() {
     storage: document.getElementById("storage").value,
     processor: document.getElementById("processor").value,
     os: document.getElementById("os").value,
+    monitor: document.getElementById("monitor").value,
     ip: document.getElementById("ip").value,
     platform: document.getElementById("platform").value,
-    ill: document.getElementById("ill").value,
-    hostname: document.getElementById("hostname").value
+    hostname: document.getElementById("hostname").value,
+    ill: document.getElementById("ill").value
   };
 
-  if (!data.location) {
-    alert("Please select location");
+  if (!data.serialNumber) {
+    alert("Serial Number required!");
     return;
   }
 
-  if (!data.user || !data.hostname) {
-    alert("User & Hostname required!");
-    return;
-  }
-
-  var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
-
-  // 🔥 Redirect instead of fetch (NO CORS ISSUE)
   window.open(url + "?data=" + encodeURIComponent(JSON.stringify(data)), "_blank");
+}
+
+// 🔍 SEARCH
+function searchData() {
+  var serial = document.getElementById("searchSerial").value;
+
+  fetch(url + "?search=" + serial)
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === "found") {
+        document.getElementById("result").innerHTML =
+          "<b>Found:</b><br>" + res.data.join(" | ");
+      } else {
+        document.getElementById("result").innerHTML = "No Data Found";
+      }
+    });
 }
 </script>
 
 </body>
-</html>
 </html>
