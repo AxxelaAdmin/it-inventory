@@ -52,10 +52,6 @@
       cursor: pointer;
       font-weight: 600;
     }
-
-    button:disabled {
-      background: #999;
-    }
   </style>
 </head>
 
@@ -125,18 +121,8 @@ function submitData() {
 
   var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
 
-  fetch(url + "?data=" + encodeURIComponent(JSON.stringify(data)))
-    .then(res => res.text())
-    .then(res => {
-      if (res.startsWith("ERROR")) {
-        alert("❌ " + res);
-      } else {
-        alert("✅ Data Saved!");
-        document.querySelectorAll("input").forEach(i => i.value = "");
-        document.getElementById("location").selectedIndex = 0;
-      }
-    })
-    .catch(() => alert("❌ Error while saving"));
+  // 🔥 Redirect instead of fetch (NO CORS ISSUE)
+  window.open(url + "?data=" + encodeURIComponent(JSON.stringify(data)), "_blank");
 }
 </script>
 
