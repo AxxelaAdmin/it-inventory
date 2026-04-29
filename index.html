@@ -130,13 +130,13 @@
 <script>
 var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
 
-// ✅ AUTO CLEAR FUNCTION
+// 🔥 CLEAR FORM
 function clearForm() {
   document.querySelectorAll("input").forEach(i => i.value = "");
   document.getElementById("location").selectedIndex = 0;
 }
 
-// SAVE (NO TAB + AUTO CLEAR)
+// 🔥 SAVE DATA
 function submitData() {
   var data = {
     location: document.getElementById("location").value,
@@ -163,65 +163,56 @@ function submitData() {
 
   var finalURL = url + "?data=" + encodeURIComponent(JSON.stringify(data));
 
-  document.getElementById("hiddenFrame").src = finalURL;
+  var iframe = document.getElementById("hiddenFrame");
 
-  alert("✅ Data Saved!");
-  clearForm(); // 🔥 auto clear
+  iframe.onload = function () {
+    alert("✅ Data Saved!");
+    clearForm(); // 🔥 auto clear after success
+  };
+
+  iframe.src = finalURL;
 }
 
-// 🔍 SEARCH
+// 🔥 SEARCH → AUTO FILL FORM
 function searchData() {
   var serial = document.getElementById("searchSerial").value;
 
-  if (!serial) {
-    document.getElementById("result").innerHTML = "";
-    return;
-  }
+  if (!serial) return;
 
   fetch(url + "?search=" + serial)
     .then(res => res.json())
     .then(res => {
+
       if (res.status === "found") {
         let d = res.data;
 
-        document.getElementById("result").innerHTML = `
-          <table>
-            <tr>
-              <th>User</th><th>Make</th><th>Model</th>
-              <th>Serial</th><th>RAM</th><th>Processor</th>
-              <th>OS</th><th>Monitor</th><th>IP</th><th>Hostname</th>
-            </tr>
-            <tr>
-              <td>${d[1]}</td>
-              <td>${d[2]}</td>
-              <td>${d[3]}</td>
-              <td>${d[5]}</td>
-              <td>${d[6]}</td>
-              <td>${d[8]}</td>
-              <td>${d[9]}</td>
-              <td>${d[10]}</td>
-              <td>${d[11]}</td>
-              <td>${d[14]}</td>
-            </tr>
-          </table>
-        `;
+        // 🔥 AUTO FILL FORM
+        document.getElementById("user").value = d[1] || "";
+        document.getElementById("make").value = d[2] || "";
+        document.getElementById("model").value = d[3] || "";
+        document.getElementById("machineType").value = d[4] || "";
+        document.getElementById("serialNumber").value = d[5] || "";
+        document.getElementById("ram").value = d[6] || "";
+        document.getElementById("storage").value = d[7] || "";
+        document.getElementById("processor").value = d[8] || "";
+        document.getElementById("os").value = d[9] || "";
+        document.getElementById("monitor").value = d[10] || "";
+        document.getElementById("ip").value = d[11] || "";
+        document.getElementById("platform").value = d[12] || "";
+        document.getElementById("ill").value = d[13] || "";
+        document.getElementById("hostname").value = d[14] || "";
+
       } else {
-        document.getElementById("result").innerHTML = "❌ No Data Found";
+        alert("❌ No Data Found");
       }
     })
-    .catch(() => {
-      document.getElementById("result").innerHTML = "❌ Error fetching data";
-    });
+    .catch(() => alert("❌ Error fetching data"));
 }
 
-// 🔥 AUTO CLEAR SEARCH RESULT
+// 🔥 AUTO CLEAR WHEN SERIAL SEARCH FIELD EMPTY
 document.getElementById("searchSerial").addEventListener("input", function () {
+
   if (this.value === "") {
-    document.getElementById("result").innerHTML = "";
+    clearForm(); // 🔥 pura form clear
   }
 });
-</script>
-
-</body>
-</html>
-</html>
