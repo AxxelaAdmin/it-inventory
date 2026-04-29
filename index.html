@@ -1,24 +1,94 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>IT Inventory</title>
+  <title>IT Inventory Sheet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body { font-family: 'Segoe UI'; background: linear-gradient(135deg,#667eea,#764ba2); }
-    .container { max-width:750px; margin:40px auto; background:#fff; padding:20px; border-radius:10px; }
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    input,select { padding:10px; border:1px solid #ccc; border-radius:5px; }
-    .full { grid-column: span 2; }
-    button { width:100%; padding:10px; background:#667eea; color:#fff; border:none; margin-top:10px; }
-    #result { margin-top:15px; background:#f1f1f1; padding:10px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+
+    /* 🔥 Center Title with Icon */
+    .title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .title span {
+      font-size: 28px;
+      margin-right: 8px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #ddd;
+      margin: 20px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    input, select {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .full {
+      grid-column: span 2;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #667eea, #5a67d8);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    button:hover {
+      opacity: 0.95;
+    }
+
+    #result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f1f1f1;
+      border-radius: 6px;
+      font-size: 14px;
+    }
   </style>
 </head>
 
 <body>
 
 <div class="container">
-  <h2>💻 IT Inventory</h2>
+
+  <!-- 🔥 TITLE CENTER -->
+  <div class="title">💻 IT Inventory Sheet</div>
 
   <!-- 🔍 SEARCH -->
   <input id="searchSerial" placeholder="Search by Serial Number" class="full">
@@ -26,7 +96,7 @@
 
   <div id="result"></div>
 
-  <hr>
+  <div class="divider"></div>
 
   <div class="grid">
 
@@ -40,28 +110,36 @@
 
     <input id="user" placeholder="User">
     <input id="make" placeholder="Make">
+
     <input id="model" placeholder="Model">
     <input id="machineType" placeholder="Machine Type">
+
     <input id="serialNumber" placeholder="Serial Number (Required)">
     <input id="ram" placeholder="RAM">
+
     <input id="storage" placeholder="Storage">
     <input id="processor" placeholder="Processor">
+
     <input id="os" placeholder="OS Version">
     <input id="monitor" placeholder="Nos Of Monitor">
+
     <input id="ip" placeholder="IP Address">
     <input id="platform" placeholder="Platform">
+
+    <!-- 🔥 FINAL ROW FIXED -->
+    <input id="ill" placeholder="ILL Details">
     <input id="hostname" placeholder="Hostname">
-    <input id="ill" placeholder="ILL Details" class="full">
 
   </div>
 
   <button onclick="submitData()">Submit</button>
+
 </div>
 
 <script>
 var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
 
-// ➕ SAVE
+// SAVE
 function submitData() {
   var data = {
     location: document.getElementById("location").value,
@@ -89,20 +167,11 @@ function submitData() {
   window.open(url + "?data=" + encodeURIComponent(JSON.stringify(data)), "_blank");
 }
 
-// 🔍 SEARCH
+// SEARCH
 function searchData() {
   var serial = document.getElementById("searchSerial").value;
 
-  fetch(url + "?search=" + serial)
-    .then(res => res.json())
-    .then(res => {
-      if (res.status === "found") {
-        document.getElementById("result").innerHTML =
-          "<b>Found:</b><br>" + res.data.join(" | ");
-      } else {
-        document.getElementById("result").innerHTML = "No Data Found";
-      }
-    });
+  window.open(url + "?search=" + serial, "_blank");
 }
 </script>
 
