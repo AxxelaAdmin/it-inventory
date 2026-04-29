@@ -57,10 +57,6 @@
       background: #999;
       cursor: not-allowed;
     }
-
-    button:hover:not(:disabled) {
-      background: #5a67d8;
-    }
   </style>
 </head>
 
@@ -81,22 +77,16 @@
 
     <input id="user" placeholder="User">
     <input id="make" placeholder="Make">
-
     <input id="model" placeholder="Model">
     <input id="machineType" placeholder="Machine Type">
-
     <input id="serialNumber" placeholder="Serial Number">
     <input id="ram" placeholder="RAM">
-
     <input id="storage" placeholder="Storage">
     <input id="processor" placeholder="Processor">
-
     <input id="os" placeholder="OS Version">
     <input id="ip" placeholder="IP Address">
-
     <input id="platform" placeholder="Platform">
     <input id="hostname" placeholder="Hostname">
-
     <input id="ill" placeholder="ILL Details" class="full">
 
   </div>
@@ -128,16 +118,15 @@ function submitData() {
     hostname: document.getElementById("hostname").value
   };
 
-  // Validation
   if (!data.location) {
     alert("Please select location");
-    resetButton();
+    resetBtn();
     return;
   }
 
   if (!data.user || !data.hostname) {
     alert("User & Hostname required!");
-    resetButton();
+    resetBtn();
     return;
   }
 
@@ -148,24 +137,20 @@ function submitData() {
       "Content-Type": "application/json"
     }
   })
-  .then(res => res.text())
+  .then(res => res.json())
   .then(res => {
-    if (res.startsWith("ERROR")) {
-      alert("❌ " + res);
+    if (res.status === "error") {
+      alert("❌ " + res.message);
     } else {
       alert("✅ Data Saved!");
-
-      // Clear form
       document.querySelectorAll("input").forEach(i => i.value = "");
       document.getElementById("location").selectedIndex = 0;
     }
   })
   .catch(err => alert("❌ Error while saving"))
-  .finally(() => {
-    resetButton();
-  });
+  .finally(() => resetBtn());
 
-  function resetButton() {
+  function resetBtn() {
     btn.disabled = false;
     btn.innerText = "Submit";
   }
