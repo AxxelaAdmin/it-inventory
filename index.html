@@ -20,23 +20,11 @@
       box-shadow: 0 15px 30px rgba(0,0,0,0.2);
     }
 
-    /* 🔥 Center Title with Icon */
     .title {
       text-align: center;
       font-size: 26px;
       font-weight: bold;
       margin-bottom: 20px;
-    }
-
-    .title span {
-      font-size: 28px;
-      margin-right: 8px;
-    }
-
-    .divider {
-      height: 1px;
-      background: #ddd;
-      margin: 20px 0;
     }
 
     .grid {
@@ -66,19 +54,26 @@
       margin-top: 10px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 15px;
-    }
-
-    button:hover {
-      opacity: 0.95;
     }
 
     #result {
-      margin-top: 10px;
-      padding: 10px;
-      background: #f1f1f1;
-      border-radius: 6px;
-      font-size: 14px;
+      margin-top: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background: #667eea;
+      color: white;
     }
   </style>
 </head>
@@ -87,7 +82,6 @@
 
 <div class="container">
 
-  <!-- 🔥 TITLE CENTER -->
   <div class="title">💻 IT Inventory Sheet</div>
 
   <!-- 🔍 SEARCH -->
@@ -96,7 +90,7 @@
 
   <div id="result"></div>
 
-  <div class="divider"></div>
+  <hr>
 
   <div class="grid">
 
@@ -110,23 +104,17 @@
 
     <input id="user" placeholder="User">
     <input id="make" placeholder="Make">
-
     <input id="model" placeholder="Model">
     <input id="machineType" placeholder="Machine Type">
-
     <input id="serialNumber" placeholder="Serial Number (Required)">
     <input id="ram" placeholder="RAM">
-
     <input id="storage" placeholder="Storage">
     <input id="processor" placeholder="Processor">
-
     <input id="os" placeholder="OS Version">
     <input id="monitor" placeholder="Nos Of Monitor">
-
     <input id="ip" placeholder="IP Address">
     <input id="platform" placeholder="Platform">
 
-    <!-- 🔥 FINAL ROW FIXED -->
     <input id="ill" placeholder="ILL Details">
     <input id="hostname" placeholder="Hostname">
 
@@ -136,10 +124,19 @@
 
 </div>
 
+<!-- 🔥 Hidden iframe -->
+<iframe id="hiddenFrame" style="display:none;"></iframe>
+
 <script>
 var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
 
-// SAVE
+// ✅ AUTO CLEAR FUNCTION
+function clearForm() {
+  document.querySelectorAll("input").forEach(i => i.value = "");
+  document.getElementById("location").selectedIndex = 0;
+}
+
+// SAVE (NO TAB + AUTO CLEAR)
 function submitData() {
   var data = {
     location: document.getElementById("location").value,
@@ -164,16 +161,67 @@ function submitData() {
     return;
   }
 
-  window.open(url + "?data=" + encodeURIComponent(JSON.stringify(data)), "_blank");
+  var finalURL = url + "?data=" + encodeURIComponent(JSON.stringify(data));
+
+  document.getElementById("hiddenFrame").src = finalURL;
+
+  alert("✅ Data Saved!");
+  clearForm(); // 🔥 auto clear
 }
 
-// SEARCH
+// 🔍 SEARCH
 function searchData() {
   var serial = document.getElementById("searchSerial").value;
 
-  window.open(url + "?search=" + serial, "_blank");
+  if (!serial) {
+    document.getElementById("result").innerHTML = "";
+    return;
+  }
+
+  fetch(url + "?search=" + serial)
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === "found") {
+        let d = res.data;
+
+        document.getElementById("result").innerHTML = `
+          <table>
+            <tr>
+              <th>User</th><th>Make</th><th>Model</th>
+              <th>Serial</th><th>RAM</th><th>Processor</th>
+              <th>OS</th><th>Monitor</th><th>IP</th><th>Hostname</th>
+            </tr>
+            <tr>
+              <td>${d[1]}</td>
+              <td>${d[2]}</td>
+              <td>${d[3]}</td>
+              <td>${d[5]}</td>
+              <td>${d[6]}</td>
+              <td>${d[8]}</td>
+              <td>${d[9]}</td>
+              <td>${d[10]}</td>
+              <td>${d[11]}</td>
+              <td>${d[14]}</td>
+            </tr>
+          </table>
+        `;
+      } else {
+        document.getElementById("result").innerHTML = "❌ No Data Found";
+      }
+    })
+    .catch(() => {
+      document.getElementById("result").innerHTML = "❌ Error fetching data";
+    });
 }
+
+// 🔥 AUTO CLEAR SEARCH RESULT
+document.getElementById("searchSerial").addEventListener("input", function () {
+  if (this.value === "") {
+    document.getElementById("result").innerHTML = "";
+  }
+});
 </script>
 
 </body>
+</html>
 </html>
