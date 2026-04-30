@@ -55,26 +55,6 @@
       cursor: pointer;
       font-weight: 600;
     }
-
-    #result {
-      margin-top: 15px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-
-    th {
-      background: #667eea;
-      color: white;
-    }
   </style>
 </head>
 
@@ -87,8 +67,6 @@
   <!-- 🔍 SEARCH -->
   <input id="searchSerial" placeholder="Search by Serial Number" class="full">
   <button onclick="searchData()">Search</button>
-
-  <div id="result"></div>
 
   <hr>
 
@@ -114,7 +92,6 @@
     <input id="monitor" placeholder="Nos Of Monitor">
     <input id="ip" placeholder="IP Address">
     <input id="platform" placeholder="Platform">
-
     <input id="ill" placeholder="ILL Details">
     <input id="hostname" placeholder="Hostname">
 
@@ -130,14 +107,15 @@
 <script>
 var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
 
-// 🔥 CLEAR FORM
+// ✅ CLEAR FORM
 function clearForm() {
   document.querySelectorAll("input").forEach(i => i.value = "");
   document.getElementById("location").selectedIndex = 0;
 }
 
-// 🔥 SAVE DATA
+// ✅ SUBMIT DATA
 function submitData() {
+
   var data = {
     location: document.getElementById("location").value,
     user: document.getElementById("user").value,
@@ -167,13 +145,13 @@ function submitData() {
 
   iframe.onload = function () {
     alert("✅ Data Saved!");
-    clearForm(); // 🔥 auto clear after success
+    clearForm();
   };
 
   iframe.src = finalURL;
 }
 
-// 🔥 SEARCH → AUTO FILL FORM
+// ✅ SEARCH → AUTO FILL
 function searchData() {
   var serial = document.getElementById("searchSerial").value;
 
@@ -182,11 +160,9 @@ function searchData() {
   fetch(url + "?search=" + serial)
     .then(res => res.json())
     .then(res => {
-
       if (res.status === "found") {
         let d = res.data;
 
-        // 🔥 AUTO FILL FORM
         document.getElementById("user").value = d[1] || "";
         document.getElementById("make").value = d[2] || "";
         document.getElementById("model").value = d[3] || "";
@@ -201,7 +177,6 @@ function searchData() {
         document.getElementById("platform").value = d[12] || "";
         document.getElementById("ill").value = d[13] || "";
         document.getElementById("hostname").value = d[14] || "";
-
       } else {
         alert("❌ No Data Found");
       }
@@ -209,10 +184,15 @@ function searchData() {
     .catch(() => alert("❌ Error fetching data"));
 }
 
-// 🔥 AUTO CLEAR WHEN SERIAL SEARCH FIELD EMPTY
-document.getElementById("searchSerial").addEventListener("input", function () {
-
-  if (this.value === "") {
-    clearForm(); // 🔥 pura form clear
-  }
+// ✅ AUTO CLEAR WHEN SEARCH EMPTY
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("searchSerial").addEventListener("input", function () {
+    if (this.value === "") {
+      clearForm();
+    }
+  });
 });
+</script>
+
+</body>
+</html>
