@@ -60,6 +60,33 @@
 
 <body>
 
+<!-- AUTO SUGGEST LISTS -->
+
+<datalist id="machineTypeList">
+  <option value="Desktop">
+  <option value="Workstation">
+  <option value="Laptop">
+  <option value="Server">
+</datalist>
+
+<datalist id="modelList">
+  <option value="Elite Desk 800 G2">
+  <option value="Elite Desk 800 G3">
+  <option value="Elite Desk 800 G5">
+  <option value="Elite Mini 800 G9">
+  <option value="ProDesk 400 G7">
+  <option value="ProDesk 600 G6">
+  <option value="Z2 G9 Tower">
+  <option value="OptiPlex 7090">
+  <option value="ThinkCentre M720">
+</datalist>
+
+<datalist id="processorList">
+  <option value="Intel_Core_i7-14700 @ 5.40 GHz">
+  <option value="Intel_Core_i5-14500 @ 5.00 GHz">
+  <option value="Intel_Core_i9-14900 @ 6.00 GHz">
+</datalist>
+
 <div class="container">
 
   <div class="title">💻 IT Inventory Sheet</div>
@@ -82,12 +109,12 @@
 
     <input id="user" placeholder="User">
     <input id="make" placeholder="Make">
-    <input id="model" placeholder="Model">
-    <input id="machineType" placeholder="Machine Type">
+    <input id="model" list="modelList" placeholder="Model">
+    <input id="machineType" list="machineTypeList" placeholder="Machine Type">
     <input id="serialNumber" placeholder="Serial Number (Required)">
     <input id="ram" placeholder="RAM">
     <input id="storage" placeholder="Storage">
-    <input id="processor" placeholder="Processor">
+    <input id="processor" list="processorList" placeholder="Processor">
     <input id="os" placeholder="OS Version">
     <input id="monitor" placeholder="Nos Of Monitor">
     <input id="ip" placeholder="IP Address">
