@@ -60,33 +60,6 @@
 
 <body>
 
-<!-- AUTO SUGGEST LISTS -->
-
-<datalist id="machineTypeList">
-  <option value="Desktop">
-  <option value="Workstation">
-  <option value="Laptop">
-  <option value="Server">
-</datalist>
-
-<datalist id="modelList">
-  <option value="Elite Desk 800 G2">
-  <option value="Elite Desk 800 G3">
-  <option value="Elite Desk 800 G5">
-  <option value="Elite Mini 800 G9">
-  <option value="ProDesk 400 G7">
-  <option value="ProDesk 600 G6">
-  <option value="Z2 G9 Tower">
-  <option value="OptiPlex 7090">
-  <option value="ThinkCentre M720">
-</datalist>
-
-<datalist id="processorList">
-  <option value="Intel_Core_i7-14700 @ 5.40 GHz">
-  <option value="Intel_Core_i5-14500 @ 5.00 GHz">
-  <option value="Intel_Core_i9-14900 @ 6.00 GHz">
-</datalist>
-
 <div class="container">
 
   <div class="title">💻 IT Inventory Sheet</div>
@@ -134,92 +107,54 @@
 <script>
 var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
 
-// ✅ CLEAR FORM
-function clearForm() {
-  document.querySelectorAll("input").forEach(i => i.value = "");
-  document.getElementById("location").selectedIndex = 0;
-}
 
-// ✅ SUBMIT DATA
-function submitData() {
-
-  var data = {
-    location: document.getElementById("location").value,
-    user: document.getElementById("user").value,
-    make: document.getElementById("make").value,
-    model: document.getElementById("model").value,
-    machineType: document.getElementById("machineType").value,
-    serialNumber: document.getElementById("serialNumber").value,
-    ram: document.getElementById("ram").value,
-    storage: document.getElementById("storage").value,
-    processor: document.getElementById("processor").value,
-    os: document.getElementById("os").value,
-    monitor: document.getElementById("monitor").value,
-    ip: document.getElementById("ip").value,
-    platform: document.getElementById("platform").value,
-    hostname: document.getElementById("hostname").value,
-    ill: document.getElementById("ill").value
-  };
-
-  if (!data.serialNumber) {
-    alert("Serial Number required!");
-    return;
-  }
-
-  var finalURL = url + "?data=" + encodeURIComponent(JSON.stringify(data));
-
-  var iframe = document.getElementById("hiddenFrame");
-
-  iframe.onload = function () {
-    alert("✅ Data Saved!");
-    clearForm();
-  };
-
-  iframe.src = finalURL;
-}
-
-// ✅ SEARCH → AUTO FILL
-function searchData() {
-  var serial = document.getElementById("searchSerial").value;
-
-  if (!serial) return;
-
-  fetch(url + "?search=" + serial)
-    .then(res => res.json())
-    .then(res => {
-      if (res.status === "found") {
-        let d = res.data;
-
-        document.getElementById("user").value = d[1] || "";
-        document.getElementById("make").value = d[2] || "";
-        document.getElementById("model").value = d[3] || "";
-        document.getElementById("machineType").value = d[4] || "";
-        document.getElementById("serialNumber").value = d[5] || "";
-        document.getElementById("ram").value = d[6] || "";
-        document.getElementById("storage").value = d[7] || "";
-        document.getElementById("processor").value = d[8] || "";
-        document.getElementById("os").value = d[9] || "";
-        document.getElementById("monitor").value = d[10] || "";
-        document.getElementById("ip").value = d[11] || "";
-        document.getElementById("platform").value = d[12] || "";
-        document.getElementById("ill").value = d[13] || "";
-        document.getElementById("hostname").value = d[14] || "";
-      } else {
-        alert("❌ No Data Found");
-      }
-    })
-    .catch(() => alert("❌ Error fetching data"));
-}
-
-// ✅ AUTO CLEAR WHEN SEARCH EMPTY
+// =============================
+// AUTO SUGGESTION
+// =============================
 document.addEventListener("DOMContentLoaded", function () {
+
+  document.body.insertAdjacentHTML("beforeend", `
+    <datalist id="modelList"></datalist>
+    <datalist id="machineTypeList"></datalist>
+    <datalist id="processorList"></datalist>
+  `);
+
+  fetch(url + "?action=suggestions")
+    .then(res => res.json())
+    .then(data => {
+
+      fillList("modelList", data.model || []);
+      fillList("machineTypeList", data.machineType || []);
+      fillList("processorList", data.processor || []);
+
+      document.getElementById("model").setAttribute("list", "modelList");
+      document.getElementById("machineType").setAttribute("list", "machineTypeList");
+      document.getElementById("processor").setAttribute("list", "processorList");
+
+    })
+    .catch(err => console.log(err));
+
   document.getElementById("searchSerial").addEventListener("input", function () {
     if (this.value === "") {
       clearForm();
     }
   });
-});
-</script>
 
-</body>
-</html>
+});
+
+
+function fillList(id, arr) {
+
+  let html = "";
+
+  arr.forEach(function(item) {
+    html += '<option value="' + item + '">';
+  });
+
+  document.getElementById(id).innerHTML = html;
+
+}
+
+
+// ✅ CLEAR FORM
+function clearForm() {
