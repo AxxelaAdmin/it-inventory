@@ -158,3 +158,93 @@ function fillList(id, arr) {
 
 // ✅ CLEAR FORM
 function clearForm() {
+  document.querySelectorAll("input").forEach(i => i.value = "");
+  document.getElementById("location").selectedIndex = 0;
+}
+
+
+// ✅ SUBMIT DATA
+function submitData() {
+
+  var data = {
+    location: document.getElementById("location").value,
+    user: document.getElementById("user").value,
+    make: document.getElementById("make").value,
+    model: document.getElementById("model").value,
+    machineType: document.getElementById("machineType").value,
+    serialNumber: document.getElementById("serialNumber").value,
+    ram: document.getElementById("ram").value,
+    storage: document.getElementById("storage").value,
+    processor: document.getElementById("processor").value,
+    os: document.getElementById("os").value,
+    monitor: document.getElementById("monitor").value,
+    ip: document.getElementById("ip").value,
+    platform: document.getElementById("platform").value,
+    hostname: document.getElementById("hostname").value,
+    ill: document.getElementById("ill").value
+  };
+
+  if (!data.serialNumber) {
+    alert("Serial Number required!");
+    return;
+  }
+
+  fetch(url + "?data=" + encodeURIComponent(JSON.stringify(data)))
+    .then(r => r.text())
+    .then(msg => {
+      if (msg.indexOf("SUCCESS") >= 0) {
+        alert("✅ Data Saved!");
+        clearForm();
+      } else {
+        alert(msg);
+      }
+    })
+    .catch(err => alert(err));
+}
+
+
+// ✅ SEARCH DATA
+function searchData() {
+
+  var serial = document.getElementById("searchSerial").value;
+
+  if (!serial) return;
+
+  fetch(url + "?search=" + encodeURIComponent(serial))
+    .then(res => res.json())
+    .then(res => {
+
+      if (res.status == "found") {
+
+        var d = res.data;
+
+        document.getElementById("user").value = d[1] || "";
+        document.getElementById("make").value = d[2] || "";
+        document.getElementById("model").value = d[3] || "";
+        document.getElementById("machineType").value = d[4] || "";
+        document.getElementById("serialNumber").value = d[5] || "";
+        document.getElementById("ram").value = d[6] || "";
+        document.getElementById("storage").value = d[7] || "";
+        document.getElementById("processor").value = d[8] || "";
+        document.getElementById("os").value = d[9] || "";
+        document.getElementById("monitor").value = d[10] || "";
+        document.getElementById("ip").value = d[11] || "";
+        document.getElementById("platform").value = d[12] || "";
+        document.getElementById("ill").value = d[13] || "";
+        document.getElementById("hostname").value = d[14] || "";
+
+      } else {
+
+        alert("❌ No Data Found");
+
+      }
+
+    })
+    .catch(err => alert(err));
+
+}
+
+</script>
+
+</body>
+</html>
