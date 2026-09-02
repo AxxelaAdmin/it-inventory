@@ -1,250 +1,1646 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
   <title>IT Inventory Sheet</title>
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
+
     body {
+
       font-family: 'Segoe UI', sans-serif;
+
       background: linear-gradient(135deg, #667eea, #764ba2);
+
       margin: 0;
+
     }
+
 
     .container {
+
       max-width: 800px;
+
       margin: 40px auto;
+
       background: #fff;
+
       padding: 30px;
+
       border-radius: 15px;
+
       box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+
     }
+
 
     .title {
+
       text-align: center;
+
       font-size: 26px;
+
       font-weight: bold;
+
       margin-bottom: 20px;
+
     }
+
+
+    .searchBox {
+
+      display: grid;
+
+      grid-template-columns: 200px 1fr;
+
+      gap: 10px;
+
+      margin-bottom: 10px;
+
+    }
+
 
     .grid {
+
       display: grid;
+
       grid-template-columns: 1fr 1fr;
+
       gap: 12px;
+
     }
 
-    input, select {
+
+    input,
+    select {
+
       padding: 12px;
+
       border-radius: 8px;
+
       border: 1px solid #ccc;
+
       font-size: 14px;
+
+      box-sizing: border-box;
+
     }
+
+
+    input:disabled,
+    select:disabled {
+
+      background: #eeeeee;
+
+      color: #555;
+
+      cursor: not-allowed;
+
+    }
+
 
     .full {
+
       grid-column: span 2;
+
     }
 
+
     button {
+
       width: 100%;
+
       padding: 12px;
+
       background: linear-gradient(90deg, #667eea, #5a67d8);
+
       color: white;
+
       border: none;
+
       border-radius: 8px;
+
       margin-top: 10px;
+
       cursor: pointer;
+
       font-weight: 600;
+
     }
+
+
+    button:hover {
+
+      opacity: 0.9;
+
+    }
+
+
+    .updateBtn {
+
+      background: linear-gradient(90deg, #16a34a, #15803d);
+
+    }
+
+
+    .cancelBtn {
+
+      background: linear-gradient(90deg, #dc2626, #b91c1c);
+
+    }
+
+
+    .editStatus {
+
+      display: none;
+
+      background: #fff7ed;
+
+      border: 1px solid #fdba74;
+
+      color: #9a3412;
+
+      padding: 10px;
+
+      border-radius: 8px;
+
+      margin-top: 12px;
+
+      text-align: center;
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+    }
+
+
+    @media(max-width:600px) {
+
+      .container {
+
+        margin: 15px;
+
+        padding: 20px;
+
+      }
+
+
+      .grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      .full {
+
+        grid-column: span 1;
+
+      }
+
+
+      .searchBox {
+
+        grid-template-columns: 1fr;
+
+      }
+
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
 
-  <div class="title">💻 IT Inventory Sheet</div>
 
-  <!-- 🔍 SEARCH -->
-  <input id="searchSerial" placeholder="Search by Serial Number" class="full">
-  <button onclick="searchData()">Search</button>
+  <div class="title">
 
-  <hr>
-
-  <div class="grid">
-
-    <select id="location" class="full">
-      <option value="">Select Location</option>
-      <option>Kolkata</option>
-      <option>Mumbai</option>
-      <option>Gurgaon</option>
-      <option>Bangalore</option>
-    </select>
-
-    <input id="user" placeholder="User">
-    <input id="make" placeholder="Make">
-    <input id="model" list="modelList" placeholder="Model">
-    <input id="machineType" list="machineTypeList" placeholder="Machine Type">
-    <input id="serialNumber" placeholder="Serial Number (Required)">
-    <input id="ram" placeholder="RAM">
-    <input id="storage" placeholder="Storage">
-    <input id="processor" list="processorList" placeholder="Processor">
-    <input id="os" placeholder="OS Version">
-    <input id="monitor" placeholder="Nos Of Monitor">
-    <input id="ip" placeholder="IP Address">
-    <input id="platform" placeholder="Platform">
-    <input id="ill" placeholder="ILL Details">
-    <input id="hostname" placeholder="Hostname">
+    💻 IT Inventory Sheet
 
   </div>
 
-  <button onclick="submitData()">Submit</button>
+
+  <!-- =====================================
+       🔍 SEARCH SECTION
+       ===================================== -->
+
+  <div class="searchBox">
+
+    <select id="searchType">
+
+      <option value="serial">
+
+        Search by Serial Number
+
+      </option>
+
+      <option value="user">
+
+        Search by User / Name
+
+      </option>
+
+    </select>
+
+
+    <input
+
+      id="searchSerial"
+
+      placeholder="Enter Serial Number"
+
+    >
+
+  </div>
+
+
+  <button onclick="searchData()">
+
+    🔍 Search
+
+  </button>
+
+
+  <div id="editStatus" class="editStatus">
+
+    ✏️ Edit Mode: Search reference is locked.
+
+  </div>
+
+
+  <hr>
+
+
+  <!-- =====================================
+       📋 INVENTORY FORM
+       ===================================== -->
+
+  <div class="grid">
+
+
+    <select id="location" class="full">
+
+      <option value="">
+
+        Select Location
+
+      </option>
+
+      <option>Kolkata</option>
+
+      <option>Mumbai</option>
+
+      <option>Gurgaon</option>
+
+      <option>Bangalore</option>
+
+    </select>
+
+
+    <input
+
+      id="user"
+
+      placeholder="User"
+
+    >
+
+
+    <input
+
+      id="make"
+
+      placeholder="Make"
+
+    >
+
+
+    <input
+
+      id="model"
+
+      list="modelList"
+
+      placeholder="Model"
+
+    >
+
+
+    <input
+
+      id="machineType"
+
+      list="machineTypeList"
+
+      placeholder="Machine Type"
+
+    >
+
+
+    <input
+
+      id="serialNumber"
+
+      placeholder="Serial Number (Required)"
+
+    >
+
+
+    <input
+
+      id="ram"
+
+      placeholder="RAM"
+
+    >
+
+
+    <input
+
+      id="storage"
+
+      placeholder="Storage"
+
+    >
+
+
+    <input
+
+      id="processor"
+
+      list="processorList"
+
+      placeholder="Processor"
+
+    >
+
+
+    <input
+
+      id="os"
+
+      placeholder="OS Version"
+
+    >
+
+
+    <input
+
+      id="monitor"
+
+      placeholder="Nos Of Monitor"
+
+    >
+
+
+    <input
+
+      id="ip"
+
+      placeholder="IP Address"
+
+    >
+
+
+    <input
+
+      id="platform"
+
+      placeholder="Platform"
+
+    >
+
+
+    <input
+
+      id="ill"
+
+      placeholder="ILL Details"
+
+    >
+
+
+    <input
+
+      id="hostname"
+
+      placeholder="Hostname"
+
+    >
+
+  </div>
+
+
+  <!-- =====================================
+       💾 NEW RECORD
+       ===================================== -->
+
+  <button
+
+    id="submitBtn"
+
+    onclick="submitData()"
+
+  >
+
+    💾 Submit
+
+  </button>
+
+
+  <!-- =====================================
+       🔄 UPDATE RECORD
+       Hidden until search is successful
+       ===================================== -->
+
+  <button
+
+    id="updateBtn"
+
+    class="updateBtn"
+
+    onclick="updateRecord()"
+
+    style="display:none;"
+
+  >
+
+    🔄 Update Record
+
+  </button>
+
+
+  <!-- =====================================
+       ❌ CANCEL EDIT
+       ===================================== -->
+
+  <button
+
+    id="cancelBtn"
+
+    class="cancelBtn"
+
+    onclick="cancelEdit()"
+
+    style="display:none;"
+
+  >
+
+    ❌ Cancel Edit
+
+  </button>
+
 
 </div>
 
-<!-- 🔥 Hidden iframe -->
-<iframe id="hiddenFrame" style="display:none;"></iframe>
+
+<!-- Hidden iframe -->
+
+<iframe
+
+  id="hiddenFrame"
+
+  style="display:none;"
+
+></iframe>
+
 
 <script>
-var url = "https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
 
 
-// =============================
-// AUTO SUGGESTION
-// =============================
+// =====================================
+// 🔗 GOOGLE APPS SCRIPT URL
+// =====================================
+
+var url =
+"https://script.google.com/macros/s/AKfycbxIfXVkCc3z1sOZ0PW4r07NMlMBsj_M2f60IYR1bDQoNQt-LUQ0mCG_yhI3Ev3s9efD/exec";
+
+
+// =====================================
+// 🔥 CURRENT RECORD INFORMATION
+// =====================================
+
+var currentRecord = null;
+
+
+// =====================================
+// 🔒 SEARCH REFERENCE TYPE
+// =====================================
+
+var currentSearchType = null;
+
+
+// =====================================
+// DOM READY
+// =====================================
+
 document.addEventListener("DOMContentLoaded", function () {
 
+
+  // =====================================
+  // CREATE DATALISTS
+  // =====================================
+
   document.body.insertAdjacentHTML("beforeend", `
+
     <datalist id="modelList"></datalist>
+
     <datalist id="machineTypeList"></datalist>
+
     <datalist id="processorList"></datalist>
+
   `);
 
+
+  // =====================================
+  // LOAD AUTO SUGGESTIONS
+  // =====================================
+
   fetch(url + "?action=suggestions")
+
     .then(res => res.json())
+
     .then(data => {
 
-      fillList("modelList", data.model || []);
-      fillList("machineTypeList", data.machineType || []);
-      fillList("processorList", data.processor || []);
+      fillList(
 
-      document.getElementById("model").setAttribute("list", "modelList");
-      document.getElementById("machineType").setAttribute("list", "machineTypeList");
-      document.getElementById("processor").setAttribute("list", "processorList");
+        "modelList",
+
+        data.model || []
+
+      );
+
+
+      fillList(
+
+        "machineTypeList",
+
+        data.machineType || []
+
+      );
+
+
+      fillList(
+
+        "processorList",
+
+        data.processor || []
+
+      );
+
+
+      document
+
+        .getElementById("model")
+
+        .setAttribute(
+
+          "list",
+
+          "modelList"
+
+        );
+
+
+      document
+
+        .getElementById("machineType")
+
+        .setAttribute(
+
+          "list",
+
+          "machineTypeList"
+
+        );
+
+
+      document
+
+        .getElementById("processor")
+
+        .setAttribute(
+
+          "list",
+
+          "processorList"
+
+        );
 
     })
-    .catch(err => console.log(err));
 
-  document.getElementById("searchSerial").addEventListener("input", function () {
-    if (this.value === "") {
-      clearForm();
-    }
-  });
+
+    .catch(err => {
+
+      console.log(
+
+        "Suggestion Error:",
+
+        err
+
+      );
+
+    });
+
+
+  // =====================================
+  // SEARCH TYPE CHANGE
+  // =====================================
+
+  document
+
+    .getElementById("searchType")
+
+    .addEventListener(
+
+      "change",
+
+      function () {
+
+        var input =
+          document.getElementById("searchSerial");
+
+
+        if (this.value == "user") {
+
+          input.placeholder =
+            "Enter User / Name";
+
+        }
+
+        else {
+
+          input.placeholder =
+            "Enter Serial Number";
+
+        }
+
+
+        input.value = "";
+
+        cancelEdit();
+
+      }
+
+    );
+
+
+  // =====================================
+  // SEARCH BOX CLEAR
+  // =====================================
+
+  document
+
+    .getElementById("searchSerial")
+
+    .addEventListener(
+
+      "input",
+
+      function () {
+
+        if (this.value.trim() === "") {
+
+          cancelEdit();
+
+        }
+
+      }
+
+    );
 
 });
 
+
+// =====================================
+// AUTO SUGGESTION LIST
+// =====================================
 
 function fillList(id, arr) {
 
   let html = "";
 
+
   arr.forEach(function(item) {
-    html += '<option value="' + item + '">';
+
+    html +=
+
+      '<option value="' +
+
+      escapeHtml(item) +
+
+      '">';
+
   });
 
-  document.getElementById(id).innerHTML = html;
+
+  document
+
+    .getElementById(id)
+
+    .innerHTML = html;
 
 }
 
 
-// ✅ CLEAR FORM
+// =====================================
+// HTML ESCAPE
+// =====================================
+
+function escapeHtml(value) {
+
+  return String(value)
+
+    .replace(/&/g, "&amp;")
+
+    .replace(/</g, "&lt;")
+
+    .replace(/>/g, "&gt;")
+
+    .replace(/"/g, "&quot;")
+
+    .replace(/'/g, "&#039;");
+
+}
+
+
+// =====================================
+// 🧹 CLEAR FORM
+// =====================================
+
 function clearForm() {
-  document.querySelectorAll("input").forEach(i => i.value = "");
-  document.getElementById("location").selectedIndex = 0;
+
+
+  document
+
+    .querySelectorAll(
+
+      "#location, #user, #make, #model, #machineType, #serialNumber, #ram, #storage, #processor, #os, #monitor, #ip, #platform, #ill, #hostname"
+
+    )
+
+    .forEach(function (element) {
+
+      if (element.tagName == "SELECT") {
+
+        element.selectedIndex = 0;
+
+      }
+
+      else {
+
+        element.value = "";
+
+      }
+
+    });
+
+
+  // Enable fields
+
+  enableAllFields();
+
+
+  // Reset edit state
+
+  currentRecord = null;
+
+  currentSearchType = null;
+
+
+  document
+
+    .getElementById("updateBtn")
+
+    .style.display = "none";
+
+
+  document
+
+    .getElementById("cancelBtn")
+
+    .style.display = "none";
+
+
+  document
+
+    .getElementById("editStatus")
+
+    .style.display = "none";
+
+
+  document
+
+    .getElementById("submitBtn")
+
+    .style.display = "block";
+
 }
 
 
-// ✅ SUBMIT DATA
-function submitData() {
+// =====================================
+// 🔓 ENABLE ALL FIELDS
+// =====================================
 
-  var data = {
-    location: document.getElementById("location").value,
-    user: document.getElementById("user").value,
-    make: document.getElementById("make").value,
-    model: document.getElementById("model").value,
-    machineType: document.getElementById("machineType").value,
-    serialNumber: document.getElementById("serialNumber").value,
-    ram: document.getElementById("ram").value,
-    storage: document.getElementById("storage").value,
-    processor: document.getElementById("processor").value,
-    os: document.getElementById("os").value,
-    monitor: document.getElementById("monitor").value,
-    ip: document.getElementById("ip").value,
-    platform: document.getElementById("platform").value,
-    hostname: document.getElementById("hostname").value,
-    ill: document.getElementById("ill").value
-  };
+function enableAllFields() {
 
-  if (!data.serialNumber) {
-    alert("Serial Number required!");
-    return;
+  document
+
+    .querySelectorAll(
+
+      "#location, #user, #make, #model, #machineType, #serialNumber, #ram, #storage, #processor, #os, #monitor, #ip, #platform, #ill, #hostname"
+
+    )
+
+    .forEach(function (element) {
+
+      element.disabled = false;
+
+    });
+
+}
+
+
+// =====================================
+// 🔒 LOCK EDIT REFERENCE
+// =====================================
+
+function lockEditReference(searchType) {
+
+
+  // First enable everything
+
+  enableAllFields();
+
+
+  // =====================================
+  // LOCATION LOCK
+  // =====================================
+
+  document
+
+    .getElementById("location")
+
+    .disabled = true;
+
+
+  // =====================================
+  // SERIAL SEARCH
+  // Serial Number LOCKED
+  // =====================================
+
+  if (searchType == "serial") {
+
+    document
+
+      .getElementById("serialNumber")
+
+      .disabled = true;
+
   }
 
-  fetch(url + "?data=" + encodeURIComponent(JSON.stringify(data)))
-    .then(r => r.text())
-    .then(msg => {
-      if (msg.indexOf("SUCCESS") >= 0) {
-        alert("✅ Data Saved!");
-        clearForm();
-      } else {
-        alert(msg);
-      }
-    })
-    .catch(err => alert(err));
+
+  // =====================================
+  // USER SEARCH
+  // User/Name LOCKED
+  // =====================================
+
+  if (searchType == "user") {
+
+    document
+
+      .getElementById("user")
+
+      .disabled = true;
+
+  }
+
 }
 
 
-// ✅ SEARCH DATA
+// =====================================
+// 💾 SUBMIT NEW DATA
+// =====================================
+
+function submitData() {
+
+
+  var data = {
+
+    location:
+      document.getElementById("location").value,
+
+    user:
+      document.getElementById("user").value,
+
+    make:
+      document.getElementById("make").value,
+
+    model:
+      document.getElementById("model").value,
+
+    machineType:
+      document.getElementById("machineType").value,
+
+    serialNumber:
+      document.getElementById("serialNumber").value,
+
+    ram:
+      document.getElementById("ram").value,
+
+    storage:
+      document.getElementById("storage").value,
+
+    processor:
+      document.getElementById("processor").value,
+
+    os:
+      document.getElementById("os").value,
+
+    monitor:
+      document.getElementById("monitor").value,
+
+    ip:
+      document.getElementById("ip").value,
+
+    platform:
+      document.getElementById("platform").value,
+
+    hostname:
+      document.getElementById("hostname").value,
+
+    ill:
+      document.getElementById("ill").value
+
+  };
+
+
+  if (!data.serialNumber) {
+
+    alert(
+
+      "Serial Number required!"
+
+    );
+
+    return;
+
+  }
+
+
+  fetch(
+
+    url +
+
+    "?data=" +
+
+    encodeURIComponent(
+
+      JSON.stringify(data)
+
+    )
+
+  )
+
+
+    .then(r => r.text())
+
+
+    .then(msg => {
+
+
+      if (
+
+        msg.indexOf("SUCCESS") >= 0
+
+      ) {
+
+        alert(
+
+          "✅ Data Saved!"
+
+        );
+
+
+        document
+
+          .getElementById("searchSerial")
+
+          .value = "";
+
+
+        clearForm();
+
+      }
+
+      else {
+
+        alert(msg);
+
+      }
+
+    })
+
+
+    .catch(err => {
+
+      alert(
+
+        "Error: " + err
+
+      );
+
+    });
+
+}
+
+
+// =====================================
+// 🔍 SEARCH DATA
+// =====================================
+
 function searchData() {
 
-  var serial = document.getElementById("searchSerial").value;
 
-  if (!serial) return;
+  var searchValue =
 
-  fetch(url + "?search=" + encodeURIComponent(serial))
+    document
+
+      .getElementById("searchSerial")
+
+      .value
+
+      .trim();
+
+
+  var searchType =
+
+    document
+
+      .getElementById("searchType")
+
+      .value;
+
+
+  if (!searchValue) {
+
+    alert(
+
+      searchType == "serial"
+
+        ? "Please enter Serial Number."
+
+        : "Please enter User / Name."
+
+    );
+
+    return;
+
+  }
+
+
+  // Disable previous edit state
+
+  currentRecord = null;
+
+
+  fetch(
+
+    url +
+
+    "?search=" +
+
+    encodeURIComponent(searchValue) +
+
+    "&searchType=" +
+
+    encodeURIComponent(searchType)
+
+  )
+
+
     .then(res => res.json())
+
+
     .then(res => {
+
 
       if (res.status == "found") {
 
+
         var d = res.data;
 
-        document.getElementById("user").value = d[1] || "";
-        document.getElementById("make").value = d[2] || "";
-        document.getElementById("model").value = d[3] || "";
-        document.getElementById("machineType").value = d[4] || "";
-        document.getElementById("serialNumber").value = d[5] || "";
-        document.getElementById("ram").value = d[6] || "";
-        document.getElementById("storage").value = d[7] || "";
-        document.getElementById("processor").value = d[8] || "";
-        document.getElementById("os").value = d[9] || "";
-        document.getElementById("monitor").value = d[10] || "";
-        document.getElementById("ip").value = d[11] || "";
-        document.getElementById("platform").value = d[12] || "";
-        document.getElementById("ill").value = d[13] || "";
-        document.getElementById("hostname").value = d[14] || "";
 
-      } else {
+        // =====================================
+        // FILL FORM
+        // =====================================
 
-        alert("❌ No Data Found");
+        document
+
+          .getElementById("location")
+
+          .value = res.sheetName || "";
+
+
+        document
+
+          .getElementById("user")
+
+          .value = d[1] || "";
+
+
+        document
+
+          .getElementById("make")
+
+          .value = d[2] || "";
+
+
+        document
+
+          .getElementById("model")
+
+          .value = d[3] || "";
+
+
+        document
+
+          .getElementById("machineType")
+
+          .value = d[4] || "";
+
+
+        document
+
+          .getElementById("serialNumber")
+
+          .value = d[5] || "";
+
+
+        document
+
+          .getElementById("ram")
+
+          .value = d[6] || "";
+
+
+        document
+
+          .getElementById("storage")
+
+          .value = d[7] || "";
+
+
+        document
+
+          .getElementById("processor")
+
+          .value = d[8] || "";
+
+
+        document
+
+          .getElementById("os")
+
+          .value = d[9] || "";
+
+
+        document
+
+          .getElementById("monitor")
+
+          .value = d[10] || "";
+
+
+        document
+
+          .getElementById("ip")
+
+          .value = d[11] || "";
+
+
+        document
+
+          .getElementById("platform")
+
+          .value = d[12] || "";
+
+
+        document
+
+          .getElementById("ill")
+
+          .value = d[13] || "";
+
+
+        document
+
+          .getElementById("hostname")
+
+          .value = d[14] || "";
+
+
+        // =====================================
+        // SAVE ORIGINAL ROW REFERENCE
+        // =====================================
+
+        currentRecord = {
+
+          sheetName: res.sheetName,
+
+          rowNumber: res.rowNumber
+
+        };
+
+
+        currentSearchType = searchType;
+
+
+        // =====================================
+        // LOCK SEARCH REFERENCE
+        // =====================================
+
+        lockEditReference(
+
+          searchType
+
+        );
+
+
+        // =====================================
+        // SHOW UPDATE BUTTON
+        // =====================================
+
+        document
+
+          .getElementById("updateBtn")
+
+          .style.display = "block";
+
+
+        document
+
+          .getElementById("cancelBtn")
+
+          .style.display = "block";
+
+
+        document
+
+          .getElementById("submitBtn")
+
+          .style.display = "none";
+
+
+        document
+
+          .getElementById("editStatus")
+
+          .style.display = "block";
+
+
+        if (searchType == "serial") {
+
+          document
+
+            .getElementById("editStatus")
+
+            .innerText =
+
+            "🔒 Serial Number is locked. Other details can be edited.";
+
+        }
+
+        else {
+
+          document
+
+            .getElementById("editStatus")
+
+            .innerText =
+
+            "🔒 User / Name is locked. Other details can be edited.";
+
+        }
+
+
+        alert(
+
+          "✅ Record Found. You can now edit the details."
+
+        );
+
+      }
+
+      else {
+
+        alert(
+
+          "❌ No Data Found"
+
+        );
 
       }
 
     })
-    .catch(err => alert(err));
+
+
+    .catch(err => {
+
+      alert(
+
+        "Search Error: " + err
+
+      );
+
+    });
+
+}
+
+
+// =====================================
+// 🔄 UPDATE RECORD
+// =====================================
+
+function updateRecord() {
+
+
+  if (!currentRecord) {
+
+    alert(
+
+      "Please search a record first."
+
+    );
+
+    return;
+
+  }
+
+
+  var data = {
+
+
+    // =====================================
+    // Existing row reference
+    // =====================================
+
+    sheetName:
+
+      currentRecord.sheetName,
+
+
+    rowNumber:
+
+      currentRecord.rowNumber,
+
+
+    // =====================================
+    // Current form values
+    // =====================================
+
+    user:
+
+      document.getElementById("user").value,
+
+
+    make:
+
+      document.getElementById("make").value,
+
+
+    model:
+
+      document.getElementById("model").value,
+
+
+    machineType:
+
+      document.getElementById("machineType").value,
+
+
+    serialNumber:
+
+      document.getElementById("serialNumber").value,
+
+
+    ram:
+
+      document.getElementById("ram").value,
+
+
+    storage:
+
+      document.getElementById("storage").value,
+
+
+    processor:
+
+      document.getElementById("processor").value,
+
+
+    os:
+
+      document.getElementById("os").value,
+
+
+    monitor:
+
+      document.getElementById("monitor").value,
+
+
+    ip:
+
+      document.getElementById("ip").value,
+
+
+    platform:
+
+      document.getElementById("platform").value,
+
+
+    ill:
+
+      document.getElementById("ill").value,
+
+
+    hostname:
+
+      document.getElementById("hostname").value
+
+  };
+
+
+  if (!data.serialNumber) {
+
+    alert(
+
+      "Serial Number required!"
+
+    );
+
+    return;
+
+  }
+
+
+  var confirmation = confirm(
+
+    "Are you sure you want to update this existing record?"
+
+  );
+
+
+  if (!confirmation) {
+
+    return;
+
+  }
+
+
+  // Disable update button while processing
+
+  var updateBtn =
+
+    document.getElementById(
+
+      "updateBtn"
+
+    );
+
+
+  updateBtn.disabled = true;
+
+
+  updateBtn.innerText =
+
+    "⏳ Updating...";
+
+
+  fetch(
+
+    url +
+
+    "?action=update&data=" +
+
+    encodeURIComponent(
+
+      JSON.stringify(data)
+
+    )
+
+  )
+
+
+    .then(res => res.json())
+
+
+    .then(res => {
+
+
+      updateBtn.disabled = false;
+
+      updateBtn.innerText =
+
+        "🔄 Update Record";
+
+
+      if (
+
+        res.status == "updated"
+
+      ) {
+
+
+        alert(
+
+          "✅ Record Updated Successfully!\n\nSame existing row has been updated."
+
+        );
+
+
+        document
+
+          .getElementById("searchSerial")
+
+          .value = "";
+
+
+        clearForm();
+
+      }
+
+      else {
+
+
+        alert(
+
+          "❌ Update Failed: " +
+
+          (res.message || "Unknown error")
+
+        );
+
+      }
+
+    })
+
+
+    .catch(err => {
+
+
+      updateBtn.disabled = false;
+
+      updateBtn.innerText =
+
+        "🔄 Update Record";
+
+
+      alert(
+
+        "Update Error: " + err
+
+      );
+
+    });
+
+}
+
+
+// =====================================
+// ❌ CANCEL EDIT
+// =====================================
+
+function cancelEdit() {
+
+
+  clearForm();
+
+
+  // Keep search type selected
+
+  // Search value will be cleared
+
+  document
+
+    .getElementById("searchSerial")
+
+    .value = "";
 
 }
 
 </script>
 
+
 </body>
+
 </html>
